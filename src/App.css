@@ -51,7 +51,14 @@ body, input, button {
 }
 
 .content form label {
-  color: #444;
+  font-size: 16px;
+  color: #444444;
+}
+
+.content form label span {
+  font-weight: normal;
+  color: #999999;
+  font-size: 12px;
 }
 
 .content form input {
