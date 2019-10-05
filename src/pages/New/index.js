@@ -1,5 +1,7 @@
 import React from 'react';
 
-export default New = () => {
+const New = () => {
     return <div />
 }
+
+export default New;
