@@ -2,8 +2,9 @@ import React, { useState, useMemo } from 'react';
 
 import camera from '../../assets/camera.svg'
 import './style.css'
+import api from '../../services/api';
 
-const New = () => {
+const New = ({history}) => {
     const [thumbnail, setThumbnail] = useState(null);
     const [company, setCompany] = useState('');
     const [techs, setTechs] = useState('');
@@ -13,8 +14,21 @@ const New = () => {
         return thumbnail ? URL.createObjectURL(thumbnail) : null;
     }, [thumbnail]);
 
-    function handleSubmit() {
+    async function handleSubmit(event) {
+        event.preventDefault();
+        const data = new FormData();
+        const user_id = localStorage.getItem('user');
 
+        data.append('thumbnail', thumbnail);
+        data.append('company', company);
+        data.append('techs', techs);
+        data.append('price', price);
+
+        await api.post('/spots', data, {
+            headers: { user_id }
+        });
+        
+        history.push('/dashboard');
     }
 
     return (
