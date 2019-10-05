@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import api from '../../services/api';
 
-const Login = () => {
+const Login = ({ history }) => {
     const [email, setEmail] = useState('');
 
     async function handleSubmit(event) {
@@ -12,6 +12,8 @@ const Login = () => {
         const { _id } = response.data;
 
         localStorage.setItem('user',_id);
+
+        history.push('/dashboard');
     } 
     return (
         <>
