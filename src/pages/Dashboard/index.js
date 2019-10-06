@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import socketio from 'socket.io-client';
 
 import api from '../../services/api';
 import './style.css'
 
 const Dashboard = () => {
     const [spots, setSpots] = useState([]);
+
+    useEffect(() => {
+        const user_id = localStorage.getItem('user');
+        const socket = socketio('http://192.168.0.9:3333', {
+            query: { user_id },
+        });
+        socket.on('booking_request', data => {
+            console.log(data);
+        });
+    }, []);
 
     useEffect(()=>{
         const loadSpots = async () => {
