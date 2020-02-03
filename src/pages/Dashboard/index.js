@@ -34,12 +34,12 @@ const Dashboard = () => {
     },[]);
 
     async function handleAccept(id) {
-        await api.post(`/bookings/${id}/approvals`);
+        await api.post(`/bookings/${id}`, { approved: true });
         setRequests(requests.filter(request => request._id !== id));
     }
 
     async function handleReject(id) {
-        await api.post(`/bookings/${id}/rejections`);
+        await api.post(`/bookings/${id}`, { approved: false });
         setRequests(requests.filter(request => request._id !== id));
     }
     return (
