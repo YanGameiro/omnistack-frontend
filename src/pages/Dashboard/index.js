@@ -25,7 +25,7 @@ const Dashboard = () => {
         const loadSpots = async () => {
             const user_id = localStorage.getItem('user');
             const response = await api.get('/dashboard', {
-                headers: { user_id }
+                headers: { ownerId : user_id }
             });
 
             setSpots(response.data);
