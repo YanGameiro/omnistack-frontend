@@ -24,8 +24,8 @@ const Dashboard = () => {
     useEffect(()=>{
         const loadSpots = async () => {
             const user_id = localStorage.getItem('user');
-            const response = await api.get('/dashboard', {
-                headers: { ownerId : user_id }
+            const response = await api.get('/spots', {
+                params: { ownerId : user_id }
             });
 
             setSpots(response.data);
