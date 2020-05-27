@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import socketio from 'socket.io-client';
+import { Tabs, Tab } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import api from '../../services/api';
 import './style.css'
@@ -15,23 +17,23 @@ const Dashboard = () => {
     }), [user_id]);
 
     useEffect(() => {
-        
+
         socket.on('booking_request', data => {
             setRequests([...requests, data]);
         });
     }, [requests, socket]);
 
-    useEffect(()=>{
+    useEffect(() => {
         const loadSpots = async () => {
             const user_id = localStorage.getItem('user');
             const response = await api.get('/spots', {
-                params: { ownerId : user_id }
+                params: { ownerId: user_id }
             });
 
             setSpots(response.data);
         }
         loadSpots();
-    },[]);
+    }, []);
 
     async function handleAccept(id) {
         await api.post(`/bookings/${id}`, { approved: true });
@@ -49,23 +51,32 @@ const Dashboard = () => {
                     <li key={request._id}>
                         <p>
                             <strong>{request.user.email}</strong>
-                             wants to go to <strong>{request.spot.company}</strong>
-                             on <strong>{request.date}</strong>
+                            wants to go to <strong>{request.spot.company}</strong>
+                            on <strong>{request.date}</strong>
                         </p>
-                        <button className="accept" onClick={()=>handleAccept(request._id)}>ACCEPT</button>
-                        <button className="reject" onClick={()=>handleReject(request._id)}>REJECT</button>
+                        <button className="accept" onClick={() => handleAccept(request._id)}>ACCEPT</button>
+                        <button className="reject" onClick={() => handleReject(request._id)}>REJECT</button>
                     </li>
                 ))}
             </ul>
             <ul className="spot-list">
                 {spots.map(spot => (
                     <li key={spot._id}>
-                        <header style={{ backgroundImage: `url(${spot.thumbnail_url})`}} />
+                        <header style={{ backgroundImage: `url(${spot.thumbnail_url})` }} />
                         <strong>{spot.company}</strong>
                         <span>{spot.price ? `$ ${spot.price}` : 'FREE'}</span>
                     </li>
                 ))}
             </ul>
+            <Tabs defaultActiveKey="my-spots">
+                <Tab eventKey="my-spots" title="My Spots">
+                    aaaaa
+                </Tab>
+                <Tab eventKey="find-spots" title="Find Spots">
+                    bbbbb
+                </Tab>
+            </Tabs>
+
 
             <Link to="/new">
                 <button className="btn"> Add new spot </button>
