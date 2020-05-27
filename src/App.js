@@ -5,10 +5,10 @@ import logo from './assets/Omni.svg';
 import Routes from './routes';
 
 function App() {
-  
+
   return (
-    <div className="container">
-      <img src={logo} alt="Omnistack App Y"/>
+    <div className="custom-container">
+      <img src={logo} alt="Omnistack App Y" />
       <div className="content">
         <Routes />
       </div>
