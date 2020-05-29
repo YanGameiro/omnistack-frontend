@@ -5,6 +5,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import SearchBar from '../../components/SearchBar';
+import SpotList from '../../components/SpotList';
 import api from '../../services/api';
 import './style.css'
 
@@ -78,30 +79,14 @@ const Dashboard = () => {
             </ul>
             <Tabs defaultActiveKey="my-spots" onSelect={(key) => setCurrentTab(key)}>
                 <Tab eventKey="my-spots" title="My Spots">
-                    <ul className="spot-list">
-                        {spots.map(spot => (
-                            <li key={spot._id}>
-                                <header style={{ backgroundImage: `url(${spot.thumbnail_url})` }} />
-                                <strong>{spot.company}</strong>
-                                <span>{spot.price ? `$ ${spot.price}` : 'FREE'}</span>
-                            </li>
-                        ))}
-                    </ul>
+                    <SpotList spots={spots} />
                     <Link to="/new">
                         <button className="btn"> Add new spot </button>
                     </Link>
                 </Tab>
                 <Tab eventKey="spots-by-tech" title="Spots By Tech">
                     <SearchBar placeholder="Type desired Tech..." liveTyping={setTech} />
-                    <ul className="spot-list">
-                        {spots.map(spot => (
-                            <li key={spot._id}>
-                                <header style={{ backgroundImage: `url(${spot.thumbnail_url})` }} />
-                                <strong>{spot.company}</strong>
-                                <span>{spot.price ? `$ ${spot.price}` : 'FREE'}</span>
-                            </li>
-                        ))}
-                    </ul>
+                    <SpotList spots={spots} />
                 </Tab>
             </Tabs>
         </>
