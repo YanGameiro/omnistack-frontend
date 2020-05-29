@@ -1,23 +1,17 @@
 import React from 'react';
+import './style.css'
 
 
+const SearchBar = ({ placeholder, liveTyping }) => {
 
-const SearchBar = ({ action, liveTyping }) => {
-    async function handleSubmit(event) {
-        event.preventDefault();
-        action();
-    }
     return (
         <>
-            <form className="search-bar" onSubmit={handleSubmit}>
-                <input
-                    id="tech"
-                    type="tech"
-                    placeholer="type desired tech"
-                    onChange={event => liveTyping(event.target.value)}
-                />
-                <button type="submit">Find</button>
-            </form>
+            <input
+                id="tech"
+                type="tech"
+                placeholder={placeholder}
+                onChange={event => liveTyping(event.target.value)}
+            />
         </>
     );
 }

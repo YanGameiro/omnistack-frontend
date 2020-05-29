@@ -12,6 +12,7 @@ const Dashboard = () => {
     const [spots, setSpots] = useState([]);
     const [requests, setRequests] = useState([]);
     const [tech, setTech] = useState(null);
+    const [currentTab, setCurrentTab] = useState(null);
 
     const user_id = localStorage.getItem('user');
 
@@ -26,37 +27,30 @@ const Dashboard = () => {
     }, [requests, socket]);
 
     useEffect(() => {
+        async function loadSpots() {
+            if (currentTab === "my-spots" || currentTab === null) {
+                const user_id = localStorage.getItem('user');
+                const response = await api.get('/spots', {
+                    params: { ownerId: user_id }
+                });
+                setSpots(response.data);
+                return;
+            }
+            if (currentTab === "spots-by-tech" && tech) { // CONFERIR
+                const response = await api.get('/spots', { params: { tech } });
+
+                setSpots(response.data);
+                return;
+            }
+            if (currentTab === "spots-by-tech" && !tech) {
+                const response = await api.get('/spots');
+
+                setSpots(response.data);
+                return;
+            }
+        }
         loadSpots();
-    }, []);
-
-    async function searchByTech() {
-        const response = await api.get('/spots', { params: { tech } });
-
-        setSpots(response.data);
-    }
-
-    async function loadSpots(currentTab = "my-spots") {
-        if (currentTab === "my-spots") {
-            const user_id = localStorage.getItem('user');
-            const response = await api.get('/spots', {
-                params: { ownerId: user_id }
-            });
-            setSpots(response.data);
-            return;
-        }
-        if (currentTab === "spots-by-tech" && tech) { // CONFERIR
-            const response = await api.get('/spots', { params: { tech } });
-
-            setSpots(response.data);
-            return;
-        }
-        if (currentTab === "spots-by-tech" && !tech) {
-            const response = await api.get('/spots');
-
-            setSpots(response.data);
-            return;
-        }
-    }
+    }, [currentTab, tech]);
 
     async function handleAccept(id) {
         await api.post(`/bookings/${id}`, { approved: true });
@@ -82,7 +76,7 @@ const Dashboard = () => {
                     </li>
                 ))}
             </ul>
-            <Tabs defaultActiveKey="my-spots" onSelect={(key) => loadSpots(key)}>
+            <Tabs defaultActiveKey="my-spots" onSelect={(key) => setCurrentTab(key)}>
                 <Tab eventKey="my-spots" title="My Spots">
                     <ul className="spot-list">
                         {spots.map(spot => (
@@ -98,7 +92,7 @@ const Dashboard = () => {
                     </Link>
                 </Tab>
                 <Tab eventKey="spots-by-tech" title="Spots By Tech">
-                    <SearchBar action={searchByTech} liveTyping={setTech} />
+                    <SearchBar placeholder="Type desired Tech..." liveTyping={setTech} />
                     <ul className="spot-list">
                         {spots.map(spot => (
                             <li key={spot._id}>
