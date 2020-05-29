@@ -4,6 +4,7 @@ import socketio from 'socket.io-client';
 import { Tabs, Tab } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import SearchBar from '../../components/SearchBar';
 import api from '../../services/api';
 import './style.css'
 
@@ -28,9 +29,7 @@ const Dashboard = () => {
         loadSpots();
     }, []);
 
-    async function handleSubmit(event) {
-        event.preventDefault();
-
+    async function searchByTech() {
         const response = await api.get('/spots', { params: { tech } });
 
         setSpots(response.data);
@@ -99,15 +98,7 @@ const Dashboard = () => {
                     </Link>
                 </Tab>
                 <Tab eventKey="spots-by-tech" title="Spots By Tech">
-                    <form onSubmit={handleSubmit}>
-                        <input
-                            id="tech"
-                            type="tech"
-                            placeholer="type desired tech"
-                            onChange={event => setTech(event.target.value)}
-                        />
-                        <button className="btn" type="submit">Find</button>
-                    </form>
+                    <SearchBar action={searchByTech} liveTyping={setTech} />
                     <ul className="spot-list">
                         {spots.map(spot => (
                             <li key={spot._id}>
