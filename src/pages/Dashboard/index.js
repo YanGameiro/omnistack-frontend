@@ -10,30 +10,54 @@ import './style.css'
 const Dashboard = () => {
     const [spots, setSpots] = useState([]);
     const [requests, setRequests] = useState([]);
+    const [tech, setTech] = useState(null);
 
     const user_id = localStorage.getItem('user');
+
     const socket = useMemo(() => socketio(process.env.REACT_APP_MAIN_API_URL, {
         query: { user_id },
     }), [user_id]);
 
     useEffect(() => {
-
         socket.on('booking_request', data => {
             setRequests([...requests, data]);
         });
     }, [requests, socket]);
 
     useEffect(() => {
-        const loadSpots = async () => {
+        loadSpots();
+    }, []);
+
+    async function handleSubmit(event) {
+        event.preventDefault();
+
+        const response = await api.get('/spots', { params: { tech } });
+
+        setSpots(response.data);
+    }
+
+    async function loadSpots(currentTab = "my-spots") {
+        if (currentTab === "my-spots") {
             const user_id = localStorage.getItem('user');
             const response = await api.get('/spots', {
                 params: { ownerId: user_id }
             });
+            setSpots(response.data);
+            return;
+        }
+        if (currentTab === "spots-by-tech" && tech) { // CONFERIR
+            const response = await api.get('/spots', { params: { tech } });
 
             setSpots(response.data);
+            return;
         }
-        loadSpots();
-    }, []);
+        if (currentTab === "spots-by-tech" && !tech) {
+            const response = await api.get('/spots');
+
+            setSpots(response.data);
+            return;
+        }
+    }
 
     async function handleAccept(id) {
         await api.post(`/bookings/${id}`, { approved: true });
@@ -59,28 +83,42 @@ const Dashboard = () => {
                     </li>
                 ))}
             </ul>
-            <ul className="spot-list">
-                {spots.map(spot => (
-                    <li key={spot._id}>
-                        <header style={{ backgroundImage: `url(${spot.thumbnail_url})` }} />
-                        <strong>{spot.company}</strong>
-                        <span>{spot.price ? `$ ${spot.price}` : 'FREE'}</span>
-                    </li>
-                ))}
-            </ul>
-            <Tabs defaultActiveKey="my-spots">
+            <Tabs defaultActiveKey="my-spots" onSelect={(key) => loadSpots(key)}>
                 <Tab eventKey="my-spots" title="My Spots">
-                    aaaaa
+                    <ul className="spot-list">
+                        {spots.map(spot => (
+                            <li key={spot._id}>
+                                <header style={{ backgroundImage: `url(${spot.thumbnail_url})` }} />
+                                <strong>{spot.company}</strong>
+                                <span>{spot.price ? `$ ${spot.price}` : 'FREE'}</span>
+                            </li>
+                        ))}
+                    </ul>
+                    <Link to="/new">
+                        <button className="btn"> Add new spot </button>
+                    </Link>
                 </Tab>
-                <Tab eventKey="find-spots" title="Find Spots">
-                    bbbbb
+                <Tab eventKey="spots-by-tech" title="Spots By Tech">
+                    <form onSubmit={handleSubmit}>
+                        <input
+                            id="tech"
+                            type="tech"
+                            placeholer="type desired tech"
+                            onChange={event => setTech(event.target.value)}
+                        />
+                        <button className="btn" type="submit">Find</button>
+                    </form>
+                    <ul className="spot-list">
+                        {spots.map(spot => (
+                            <li key={spot._id}>
+                                <header style={{ backgroundImage: `url(${spot.thumbnail_url})` }} />
+                                <strong>{spot.company}</strong>
+                                <span>{spot.price ? `$ ${spot.price}` : 'FREE'}</span>
+                            </li>
+                        ))}
+                    </ul>
                 </Tab>
             </Tabs>
-
-
-            <Link to="/new">
-                <button className="btn"> Add new spot </button>
-            </Link>
         </>
     )
 }
