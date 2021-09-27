@@ -4,8 +4,7 @@ How to run:
 
 - clone the repo
 - enter the repo folder
-- run "yarn i" to install dependencies
-- configure baseURL in `/src/services/api.js` to point to the backend API
+- run "yarn install" to install dependencies
+- create a .env file following the .env.example
 - run "yarn start" to start
 
-"Semana Omnistack" https://rocketseat.com.br/week-9/aulas
